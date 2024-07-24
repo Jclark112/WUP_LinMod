@@ -1,7 +1,7 @@
 ---
 title: "linear model from Web"
-author: "Your Name"
-date: "Put semester and year"
+author: "Juliet Clark"
+date: "Summer 2024 "
 output:
    html_document:
          toc: true
@@ -16,7 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 Read about the data from the website where it is staged.  Then form three regression models; Model1 is SIMS~ARM, Model2 is SIMS~GRIP, and Model3 is SIMS~ARM+GRIP. For each model find a 95% prediction interval of SIMS given a value of 94  for GRIP and 88 for ARM. Compare Model1 with Model3 using anova. Write it up in a markdown document, push the project up to your github account and submit it back to canvas as link. 
 
  
-
+#Methods
+All variables are numerical therefor we use the numerical numerical files. 
 
 ```{r include=FALSE}
 require(tidyverse)
@@ -33,20 +34,65 @@ data <- read.csv(file="https://onlinestatbook.com/case_studies_rvls/physical_str
 
 ## Model 1 SIM~ARMS
 
-### scatterplot
+
+### descriptive results
+```{r}
+plot(SIMS~ARM,data=data)
+```
+
+This plot shows the arm strength increasing as the stimulation value inceases. 
+
+### graphical results
+
+```{r}
+plot(SIMS~ARM,data=data)
+```
 
 ### Numerical results
 
+```{r}
+cor(SIMS~ARM, data=data)
+```
+This correlation shows that the arm strength increases and there is a positive trend with SIM.
 
 ### Inferential  (Build model.1)
 
+```{r}
+model.1 <- lm(SIMS~ARM,data=data)
+summary.lm(model.1)
+```
+
+```{r}
+plot(SIMS~ARM,data=data)
+abline(model.1, col='red')
+```
+
+Intercept p-value <0.05
+->significant "different from 0"
+Coefficient ARM P-Val <0.05 -> ARM is significant "ARM works to redict SIMS"
+
 #### Predict at target point
 
+```{r}
+newdata = data.frame(ARM = 88, GRIP=99)
+predict(model.1, newdata, interval='pred')
+```
+
+The SIMS prediction for ARM=88 is 0.71, the predicting interval is (-1.73, 3.14) 
 
 #### scatterplot with model fit
-  
+
+```{r}
+plot(SIMS~GRIP, data=data)
+```
+
+There seems to be a positive correlation. 
 
 ## Model 2 SIM~GRIP
+
+```{r}
+cor(SIMS~GRIP, data=data)
+```
 
 ### Now add in scatterplot
 
@@ -55,24 +101,59 @@ data <- read.csv(file="https://onlinestatbook.com/case_studies_rvls/physical_str
 
 
 ### Inferential  (Build model.2)
-  
+ 
+```{r}
+model.1 <- lm(SIMS~GRIP,data=data)
+summary.lm(model.1)
+```
 
+```{r}
+plot(SIMS~GRIP,data=data)
+abline(model.1, col='red')
+```
+
+Intercept p-value <0.05
+->significant "different from 0"
+Coefficient ARM P-val <0.05 -> ARM is significant "ARM works to predict SIMS
 #### predict model.2 at target point
 
-#### now add the model fit to our plot for model.2
-  
-
+```{r}
+newdata = data.frame (ARM = 88, GRIP=94)
+predict (model.1, newdata, interval='pred')
+```
+The SIMS prediction is 0.54, the interval is (-3.11, 2.04)
 
 ## Model 3 SIM~ARM+GRIP
 
-### Numerical results (cor)
-
-`
+```{r}
+model.3 = lm(SIMS=ARM_GRIP,data=data)
+summary (model.3)
+```
   
 ### Inferential  (Build 2-dimentional model.3)
 
+```{r}
+model.1 <- lm(SIMS~ARM + GRIP, data=data)
+summary.lm(model.1)
+```
+```{r}
+plot(SIMS~ARM + GRIP,data=data)
+abline(model.1, col='red')
+```
+
+Intercept p-value <0.05
+->significant "different from 0"
+Coefficient ARM P-val <0.05 -> ARM is significant "ARM works to predict SIMS"
+
+
 #### predict model.3 at target point
-  
+
+```{r}
+newdata = data.frame (ARM = 88, GRIP=94)
+predict (model.1, newdata, interval='pred')
+```
+
+The SIMS prediction for ARM is 0.14. The predicting interval is (-2.13, 2.43)
 
 ## Comparing nested models ANOVA Test
 
